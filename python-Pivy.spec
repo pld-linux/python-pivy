@@ -1,25 +1,24 @@
-# TODO:
-#	Need working Coin
 %define 	module	Pivy
-Summary:	-
-Summary(pl.UTF-8):	-
+Summary:	Coin binding for Python
+Summary(pl.UTF-8):	Pythonowy interfejs do biblioteki Coin
 Name:		python-%{module}
-Version:	0.3.0
-Release:	0.1
+Version:	0.5.0
+Release:	0.20100606.0.1
 License:	- (enter GPL/GPL v2/GPL v3/LGPL/BSD/BSD-like/other license name here)
 Group:		Development/Languages/Python
-# http://pivy.coin3d.org/download/pivy/releases/0.3.0/Pivy-0.3.0.tar.bz2
-Source0:	http://pivy.coin3d.org/download/pivy/releases/%{version}/%{module}-%{version}.tar.bz2
-# Source0-md5:	4f6095396c58a16f12e2ded3dc7c16fe
+# Source0:	http://pivy.coin3d.org/download/pivy/releases/%{version}/%{module}-%{version}.tar.bz2
+Source0:	http://beauty.ant.gliwice.pl/PLD/Pivy-0.5.0.tar.bz2
+# Source0-md5:	ec285d81eec0d40c86ddbc730515c187
 URL:		http://pivy.coin3d.org/
+BuildRequires:	Coin-devel
+BuildRequires:	SoQt-devel
 BuildRequires:	python-devel
 BuildRequires:	rpm-pythonprov
-# if py_postclean is used
 BuildRequires:	rpmbuild(macros) >= 1.219
-Requires:	coin
+Requires:	Coin
+Requires:	SoQt
 #Requires:		python-libs
 Requires:	python-modules
-#BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -38,7 +37,9 @@ export CFLAGS="%{rpmcflags}"
 rm -rf $RPM_BUILD_ROOT
 %{__python} setup.py install \
 	--optimize=2 \
-	--root=$RPM_BUILD_ROOT
+	--root=$RPM_BUILD_ROOT \
+	--install-lib=%{py_sitedir}
+
 
 # change %{py_sitedir} to %{py_sitescriptdir} for 'noarch' packages!
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
@@ -50,10 +51,11 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS CREDITS ChangeLog NEWS README THANKS TODO
+%doc AUTHORS NEWS README THANKS
 # change %{py_sitedir} to %{py_sitescriptdir} for 'noarch' packages!
-%{py_sitedir}/*.py[co]
-%attr(755,root,root) %{py_sitedir}/*.so
+# %{py_sitedir}/*.py[co]
+# %attr(755,root,root) %{py_sitedir}/*.so
+%{py_sitedir}/pivy
 %if "%{py_ver}" > "2.4"
-%{py_sitedir}/TEMPLATE-*.egg-info
+%{py_sitedir}/%{module}-*.egg-info
 %endif

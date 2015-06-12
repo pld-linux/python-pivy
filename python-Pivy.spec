@@ -3,12 +3,12 @@ Summary:	Coin binding for Python
 Summary(pl.UTF-8):	Pythonowy interfejs do biblioteki Coin
 Name:		python-%{module}
 Version:	0.5.0
-Release:	0.20100606.0.1
+Release:	0.20110922.1
 License:	- (enter GPL/GPL v2/GPL v3/LGPL/BSD/BSD-like/other license name here)
 Group:		Development/Languages/Python
 # Source0:	http://pivy.coin3d.org/download/pivy/releases/%{version}/%{module}-%{version}.tar.bz2
-Source0:	http://beauty.ant.gliwice.pl/PLD/Pivy-0.5.0.tar.bz2
-# Source0-md5:	ec285d81eec0d40c86ddbc730515c187
+Source0:	ftp://ftp.debian.org/debian/pool/main/p/pivy/pivy_%{version}~v609hg.orig.tar.bz2
+# Source0-md5:	61cc9877c4ac369736540040c3d1cac8
 URL:		http://pivy.coin3d.org/
 BuildRequires:	Coin-devel
 BuildRequires:	SoQt-devel
@@ -17,7 +17,6 @@ BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.219
 Requires:	Coin
 Requires:	SoQt
-#Requires:		python-libs
 Requires:	python-modules
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -26,10 +25,9 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %description -l pl.UTF-8
 
 %prep
-%setup -q -n %{module}-%{version}
+%setup -q -n default-8eab90908f2a
 
 %build
-# CFLAGS is only for arch packages - remove on noarch packages
 export CFLAGS="%{rpmcflags}"
 %{__python} setup.py build
 

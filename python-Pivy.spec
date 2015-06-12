@@ -11,10 +11,16 @@ Source0:	ftp://ftp.debian.org/debian/pool/main/p/pivy/pivy_%{version}~v609hg.ori
 # Source0-md5:	61cc9877c4ac369736540040c3d1cac8
 URL:		http://pivy.coin3d.org/
 BuildRequires:	Coin-devel
+BuildRequires:	OpenGL-GLU-devel
+BuildRequires:	QtGui-devel
+BuildRequires:	QtOpenGL-devel
 BuildRequires:	SoQt-devel
 BuildRequires:	python-devel
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.219
+BuildRequires:	swig
+BuildRequires:	swig-python
+BuildRequires:	xorg-lib-libXmu-devel
 Requires:	Coin
 Requires:	SoQt
 Requires:	python-modules

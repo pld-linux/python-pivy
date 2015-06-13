@@ -1,4 +1,4 @@
-%define 	rel	2
+%define 	rel	3
 %define 	module	pivy
 Summary:	Coin binding for Python
 Summary(pl.UTF-8):	Pythonowy interfejs do biblioteki Coin
@@ -22,8 +22,6 @@ BuildRequires:	rpmbuild(macros) >= 1.219
 BuildRequires:	swig
 BuildRequires:	swig-python
 BuildRequires:	xorg-lib-libXmu-devel
-Requires:	Coin
-Requires:	SoQt
 Requires:	python-modules
 Provides:	python-Pivy = %{version}-%{release}
 Obsoletes:	python-Pivy < 0.5.0-0.20110922.2
@@ -61,5 +59,23 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc AUTHORS NEWS README THANKS
-%{py_sitedir}/%{module}
-%{py_sitedir}/Pivy-*.egg-info
+%dir %{py_sitedir}/pivy
+%dir %{py_sitedir}/pivy/gui
+%dir %{py_sitedir}/pivy/quarter
+%dir %{py_sitedir}/pivy/quarter/devices
+%dir %{py_sitedir}/pivy/quarter/eventhandlers
+%dir %{py_sitedir}/pivy/quarter/plugins
+%dir %{py_sitedir}/pivy/quarter/plugins/designer
+%dir %{py_sitedir}/pivy/quarter/plugins/designer/python
+
+%{py_sitedir}/pivy/*.py[co]
+%{py_sitedir}/pivy/gui/*.py[co]
+%{py_sitedir}/pivy/quarter/*.py
+%{py_sitedir}/pivy/quarter/devices/*.py[co]
+%{py_sitedir}/pivy/quarter/eventhandlers/*.py[co]
+%{py_sitedir}/pivy/quarter/plugins/designer/python/*.py[co]
+
+%attr(755,root,root) %{py_sitedir}/pivy/_coin.so
+%attr(755,root,root) %{py_sitedir}/pivy/gui/_soqt.so
+
+%{py_sitedir}/Pivy-%{version}-py*.egg-info

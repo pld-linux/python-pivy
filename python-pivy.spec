@@ -1,9 +1,10 @@
-%define 	module	Pivy
+%define 	rel	2
+%define 	module	pivy
 Summary:	Coin binding for Python
 Summary(pl.UTF-8):	Pythonowy interfejs do biblioteki Coin
 Name:		python-%{module}
 Version:	0.5.0
-Release:	0.20110922.1
+Release:	0.20110922.%{rel}
 License:	ISC
 Group:		Development/Languages/Python
 # Source0:	http://pivy.coin3d.org/download/pivy/releases/%{version}/%{module}-%{version}.tar.bz2
@@ -24,13 +25,16 @@ BuildRequires:	xorg-lib-libXmu-devel
 Requires:	Coin
 Requires:	SoQt
 Requires:	python-modules
+Provides:	python-Pivy = %{version}-%{release}
+Obsoletes:	python-Pivy < 0.5.0-0.20110922.2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-Pivy is a Coin binding for Python. Coin is a high-level 3D graphics library with
-a C++ Application Programming Interface. Coin uses scene-graph data structures
-to render real-time graphics suitable for mostly all kinds of scientific and
-engineering visualization applications.
+Pivy is a Coin binding for Python. Coin is a high-level 3D graphics
+library with a C++ Application Programming Interface. Coin uses
+scene-graph data structures to render real-time graphics suitable for
+mostly all kinds of scientific and engineering visualization
+applications.
 
 %prep
 %setup -qc
@@ -57,5 +61,5 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc AUTHORS NEWS README THANKS
-%{py_sitedir}/pivy
-%{py_sitedir}/%{module}-*.egg-info
+%{py_sitedir}/%{module}
+%{py_sitedir}/Pivy-*.egg-info

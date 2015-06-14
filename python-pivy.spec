@@ -70,7 +70,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %{py_sitedir}/pivy/*.py[co]
 %{py_sitedir}/pivy/gui/*.py[co]
-%{py_sitedir}/pivy/quarter/*.py
+%{py_sitedir}/pivy/quarter/*.py[co]
 %{py_sitedir}/pivy/quarter/devices/*.py[co]
 %{py_sitedir}/pivy/quarter/eventhandlers/*.py[co]
 %{py_sitedir}/pivy/quarter/plugins/designer/python/*.py[co]

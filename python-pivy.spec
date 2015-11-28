@@ -1,4 +1,4 @@
-%define 	rel	4
+%define 	rel	5
 %define 	module	pivy
 Summary:	Coin binding for Python
 Summary(pl.UTF-8):	Pythonowy interfejs do biblioteki Coin

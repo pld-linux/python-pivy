@@ -39,13 +39,11 @@ applications.
 mv default-*/* .
 
 %build
-export CFLAGS="%{rpmcflags}"
-%{__python} setup.py build
+%py_build
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__python} setup.py install \
-	--optimize=2 \
+%py_install \
 	--install-lib=%{py_sitedir} \
 	--root=$RPM_BUILD_ROOT
 

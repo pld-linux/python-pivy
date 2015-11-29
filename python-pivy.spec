@@ -18,7 +18,7 @@ BuildRequires:	QtOpenGL-devel
 BuildRequires:	SoQt-devel
 BuildRequires:	python-devel
 BuildRequires:	rpm-pythonprov
-BuildRequires:	rpmbuild(macros) >= 1.219
+BuildRequires:	rpmbuild(macros) >= 1.710
 BuildRequires:	swig
 BuildRequires:	swig-python
 BuildRequires:	xorg-lib-libXmu-devel

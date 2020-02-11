@@ -8,7 +8,7 @@ Release:	0.20110922.%{rel}
 License:	ISC
 Group:		Development/Languages/Python
 # Source0:	http://pivy.coin3d.org/download/pivy/releases/%{version}/%{module}-%{version}.tar.bz2
-Source0:	ftp://ftp.debian.org/debian/pool/main/p/pivy/pivy_%{version}~v609hg.orig.tar.bz2
+Source0:	http://ftp.debian.org/debian/pool/main/p/pivy/pivy_%{version}~v609hg.orig.tar.bz2
 # Source0-md5:	61cc9877c4ac369736540040c3d1cac8
 URL:		http://pivy.coin3d.org/
 BuildRequires:	Coin-devel

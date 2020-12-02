@@ -13,12 +13,12 @@ Source0:	http://ftp.debian.org/debian/pool/main/p/pivy/pivy_%{version}~v609hg.or
 URL:		http://pivy.coin3d.org/
 BuildRequires:	Coin-devel
 BuildRequires:	OpenGL-GLU-devel
-BuildRequires:	QtGui-devel
-BuildRequires:	QtOpenGL-devel
+BuildRequires:	QtGui-devel >= 4
+BuildRequires:	QtOpenGL-devel >= 4
 BuildRequires:	SoQt-devel
 BuildRequires:	python-devel
 BuildRequires:	rpm-pythonprov
-BuildRequires:	rpmbuild(macros) >= 1.710
+BuildRequires:	rpmbuild(macros) >= 1.714
 BuildRequires:	swig
 BuildRequires:	swig-python
 BuildRequires:	xorg-lib-libXmu-devel
@@ -34,18 +34,25 @@ scene-graph data structures to render real-time graphics suitable for
 mostly all kinds of scientific and engineering visualization
 applications.
 
+%description -l pl.UTF-8
+Pivy to wiązania biblioteki Coin dla Pythona. Coin to wysokopoziomowa
+biblioteka grafiki 3D z interfejsem programistycznym (API) C++.
+Wykorzystuje struktury danych scena-graf do renderowania w czasie
+rzeczywistym grafiki w sposób nadający się do większości zastosowań w
+wizualizacji naukowej i inżynierskiej.
+
 %prep
 %setup -qc
-mv default-*/* .
+%{__mv} default-*/* .
 
 %build
 %py_build
 
 %install
 rm -rf $RPM_BUILD_ROOT
+
 %py_install \
-	--install-lib=%{py_sitedir} \
-	--root=$RPM_BUILD_ROOT
+	--install-lib=%{py_sitedir}
 
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}

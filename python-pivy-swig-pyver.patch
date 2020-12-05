@@ -1,0 +1,49 @@
+--- pivy-0.6.5/setup.py.orig	2020-01-12 22:51:59.000000000 +0100
++++ pivy-0.6.5/setup.py	2020-12-03 06:30:36.542114906 +0100
+@@ -145,10 +145,13 @@
+ 
+     SWIG_SUPPRESS_WARNINGS = "-w302,306,307,312,314,325,361,362,467,389,503,509,510"
+     SWIG_PARAMS = "-c++ -python -includeall -modern -D__PIVY__ " + \
+-                  "-I. -Ifake_headers -I\"%s\" %s -o %s_wrap.cpp " + \
++                  "-I. -Ifake_headers -I\"%s\" %s -o %s_%s_wrap.cpp -outdir %s " + \
+                   "interfaces" + os.sep + "%s.i"
+     if sys.version_info.major >= 3:
+         SWIG_PARAMS = '-py3 ' + SWIG_PARAMS
++        SWIG_PY_SUFFIX = 'py3'
++    else:
++        SWIG_PY_SUFFIX = 'py2'
+ 
+ 
+     # TODO: add command line arguments to tell distutils which library should be build
+@@ -576,24 +579,27 @@
+                     else:
+                         LDFLAGS_LIBS += ' -lCoin'
+ 
+-            if not os.path.isfile(mod_out_prefix + "_wrap.cpp"):
++            if not os.path.isfile(mod_out_prefix + "_" + self.SWIG_PY_SUFFIX + "_wrap.cpp"):
++                if not os.path.isdir('out_' + self.SWIG_PY_SUFFIX):
++                    os.mkdir('out_' + self.SWIG_PY_SUFFIX)
+                 print(red("\n=== Generating %s_wrap.cpp for %s ===\n" %
+                           (mod_out_prefix, module)))
+                 print(blue(self.SWIG + " " + self.SWIG_SUPPRESS_WARNINGS + " " + self.SWIG_PARAMS %
+                            (INCLUDE_DIR,
+                             self.CXX_INCS,
+-                            mod_out_prefix, module)))
++                            mod_out_prefix, self.SWIG_PY_SUFFIX, 'out_' + self.SWIG_PY_SUFFIX, module)))
+                 if os.system(self.SWIG + " " + self.SWIG_SUPPRESS_WARNINGS + " " + self.SWIG_PARAMS %
+                              (INCLUDE_DIR,
+                               self.CXX_INCS,
+-                              mod_out_prefix, mod_hack_name)):
++                              mod_out_prefix, self.SWIG_PY_SUFFIX, 'out_' + self.SWIG_PY_SUFFIX, mod_hack_name)):
+                     print(red("SWIG did not generate wrappers successfully! ** Aborting **"))
+                     sys.exit(1)
+             else:
+                 print(red("=== %s_wrap.cpp for %s already exists! ===" %
+                           (mod_out_prefix, module_pkg_name + module)))
++            shutil.copyfile(os.path.join('out_' + self.SWIG_PY_SUFFIX, module + '.py'), mod_out_prefix + '.py')
+ 
+-            self.ext_modules.append(Extension(module_name, [mod_out_prefix + "_wrap.cpp"],
++            self.ext_modules.append(Extension(module_name, [mod_out_prefix + "_" + self.SWIG_PY_SUFFIX + "_wrap.cpp"],
+                                               extra_compile_args=(
+                                                   self.CXX_INCS + CPP_FLAGS).split(),
+                                               extra_link_args=(self.CXX_LIBS + LDFLAGS_LIBS).split()))

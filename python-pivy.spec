@@ -1,28 +1,36 @@
-%define 	rel	5
+#
+# Conditional build:
+%bcond_without	python2	# CPython 2.x module
+%bcond_without	python3	# CPython 3.x module
+%bcond_without	qt	# SoQt GUI modules (only qt5 based SoQt is supported)
+
 %define 	module	pivy
-Summary:	Coin binding for Python
-Summary(pl.UTF-8):	Pythonowy interfejs do biblioteki Coin
+Summary:	Coin binding for Python 2
+Summary(pl.UTF-8):	Interfejs Pythona 2 do biblioteki Coin
 Name:		python-%{module}
-Version:	0.5.0
-Release:	0.20110922.%{rel}
+Version:	0.6.5
+Release:	1
 License:	ISC
-Group:		Development/Languages/Python
-# Source0:	http://pivy.coin3d.org/download/pivy/releases/%{version}/%{module}-%{version}.tar.bz2
-Source0:	http://ftp.debian.org/debian/pool/main/p/pivy/pivy_%{version}~v609hg.orig.tar.bz2
-# Source0-md5:	61cc9877c4ac369736540040c3d1cac8
-URL:		http://pivy.coin3d.org/
-BuildRequires:	Coin-devel
+Group:		Libraries/Python
+#Source0Download: https://github.com/coin3d/pivy/releases
+Source0:	https://github.com/coin3d/pivy/archive/%{version}/pivy-%{version}.tar.gz
+# Source0-md5:	73b6083aa1c055c83294d0fa1fee037b
+Patch0:		%{name}-swig-pyver.patch
+URL:		https://github.com/coin3d/pivy
+BuildRequires:	Coin-devel >= 4.0.0
 BuildRequires:	OpenGL-GLU-devel
-BuildRequires:	QtGui-devel >= 4
-BuildRequires:	QtOpenGL-devel >= 4
-BuildRequires:	SoQt-devel
-BuildRequires:	python-devel
+BuildRequires:	Qt5Gui-devel >= 5
+BuildRequires:	Qt5OpenGL-devel >= 5
+BuildRequires:	SoQt-devel >= 1.6.0
+%{?with_python2:BuildRequires:	python-devel >= 1:2.7}
+%{?with_python3:BuildRequires:	python3-devel >= 1:3.2}
+BuildRequires:	qt5-build >= 5
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.714
-BuildRequires:	swig
-BuildRequires:	swig-python
+BuildRequires:	swig-python >= 3.0.8
 BuildRequires:	xorg-lib-libXmu-devel
-Requires:	python-modules
+Requires:	Coin >= 4.0.0
+Requires:	python-modules >= 1:2.7
 Provides:	python-Pivy = %{version}-%{release}
 Obsoletes:	python-Pivy < 0.5.0-0.20110922.2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -41,46 +49,122 @@ Wykorzystuje struktury danych scena-graf do renderowania w czasie
 rzeczywistym grafiki w sposób nadający się do większości zastosowań w
 wizualizacji naukowej i inżynierskiej.
 
+%package gui
+Summary:	GUI (SoQt) support for Python 2 Coin binding
+Summary(pl.UTF-8): Obsługa GUI (SoQt) do wiązań biblioteki Coin dla Pythona 2
+Group:		Libraries/Python
+Requires:	%{name} = %{version}-%{release}
+Requires:	SoQt >= 1.6.0
+Requires:	python-PySide2
+
+%description gui
+GUI (SoQt) support for Python 2 Coin binding.
+
+%description gui -l pl.UTF-8
+Obsługa GUI (SoQt) do wiązań biblioteki Coin dla Pythona 2.
+
+%package -n python3-pivy
+Summary:	Coin binding for Python 3
+Summary(pl.UTF-8):	Interfejs Pythona 3 do biblioteki Coin
+Group:		Libraries/Python
+Requires:	Coin >= 4.0.0
+Requires:	python-modules >= 1:3.2
+
+%description -n python3-pivy
+Pivy is a Coin binding for Python. Coin is a high-level 3D graphics
+library with a C++ Application Programming Interface. Coin uses
+scene-graph data structures to render real-time graphics suitable for
+mostly all kinds of scientific and engineering visualization
+applications.
+
+%description -n python3-pivy -l pl.UTF-8
+Pivy to wiązania biblioteki Coin dla Pythona. Coin to wysokopoziomowa
+biblioteka grafiki 3D z interfejsem programistycznym (API) C++.
+Wykorzystuje struktury danych scena-graf do renderowania w czasie
+rzeczywistym grafiki w sposób nadający się do większości zastosowań w
+wizualizacji naukowej i inżynierskiej.
+
+%package -n python3-pivy-gui
+Summary:	GUI (SoQt) support for Python 3 Coin binding
+Summary(pl.UTF-8): Obsługa GUI (SoQt) do wiązań biblioteki Coin dla Pythona 3
+Group:		Libraries/Python
+Requires:	SoQt >= 1.6.0
+Requires:	python3-PySide2
+Requires:	python3-pivy = %{version}-%{release}
+
+%description -n python3-pivy-gui
+GUI (SoQt) support for Python 2 Coin binding.
+
+%description -n python3-pivy-gui -l pl.UTF-8
+Obsługa GUI (SoQt) do wiązań biblioteki Coin dla Pythona 2.
+
 %prep
-%setup -qc
-%{__mv} default-*/* .
+%setup -q -n pivy-%{version}
+%patch0 -p1
 
 %build
-%py_build
+PATH=%{_libdir}/qt5/bin:$PATH
+
+%if %{with python2}
+%py_build \
+	%{!?with_qt:--without-soqt}
+%endif
+
+%if %{with python3}
+%py3_build \
+	%{!?with_qt:--without-soqt}
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%py_install \
-	--install-lib=%{py_sitedir}
+PATH=%{_libdir}/qt5/bin:$PATH
 
-%py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
-%py_comp $RPM_BUILD_ROOT%{py_sitedir}
+%if %{with python2}
+%py_install \
+	%{!?with_qt:--without-soqt}
+
 %py_postclean
+%endif
+
+%if %{with python3}
+%py3_install \
+	%{!?with_qt:--without-soqt}
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS NEWS README THANKS
+%doc AUTHORS LICENSE NEWS README.md THANKS
 %dir %{py_sitedir}/pivy
-%dir %{py_sitedir}/pivy/gui
-%dir %{py_sitedir}/pivy/quarter
-%dir %{py_sitedir}/pivy/quarter/devices
-%dir %{py_sitedir}/pivy/quarter/eventhandlers
-%dir %{py_sitedir}/pivy/quarter/plugins
-%dir %{py_sitedir}/pivy/quarter/plugins/designer
-%dir %{py_sitedir}/pivy/quarter/plugins/designer/python
-
-%{py_sitedir}/pivy/*.py[co]
-%{py_sitedir}/pivy/gui/*.py[co]
-%{py_sitedir}/pivy/quarter/*.py[co]
-%{py_sitedir}/pivy/quarter/devices/*.py[co]
-%{py_sitedir}/pivy/quarter/eventhandlers/*.py[co]
-%{py_sitedir}/pivy/quarter/plugins/designer/python/*.py[co]
-
 %attr(755,root,root) %{py_sitedir}/pivy/_coin.so
-%attr(755,root,root) %{py_sitedir}/pivy/gui/_soqt.so
-
+%{py_sitedir}/pivy/*.py[co]
+%{py_sitedir}/pivy/graphics
+%{py_sitedir}/pivy/quarter
 %{py_sitedir}/Pivy-%{version}-py*.egg-info
+
+%files gui
+%defattr(644,root,root,755)
+%dir %{py_sitedir}/pivy/gui
+%attr(755,root,root) %{py_sitedir}/pivy/gui/_soqt.so
+%{py_sitedir}/pivy/gui/*.py[co]
+
+%files -n python3-pivy
+%defattr(644,root,root,755)
+%doc AUTHORS LICENSE NEWS README.md THANKS
+%dir %{py3_sitedir}/pivy
+%attr(755,root,root) %{py3_sitedir}/pivy/_coin.cpython-*.so
+%{py3_sitedir}/pivy/*.py
+%{py3_sitedir}/pivy/__pycache__
+%{py3_sitedir}/pivy/graphics
+%{py3_sitedir}/pivy/quarter
+%{py3_sitedir}/Pivy-%{version}-py*.egg-info
+
+%files -n python3-pivy-gui
+%defattr(644,root,root,755)
+%dir %{py3_sitedir}/pivy/gui
+%attr(755,root,root) %{py3_sitedir}/pivy/gui/_soqt.cpython-*.so
+%{py3_sitedir}/pivy/gui/*.py
+%{py3_sitedir}/pivy/gui/__pycache__

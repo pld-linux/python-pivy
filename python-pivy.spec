@@ -22,11 +22,13 @@ BuildRequires:	OpenGL-GLU-devel
 BuildRequires:	Qt5Gui-devel >= 5
 BuildRequires:	Qt5OpenGL-devel >= 5
 BuildRequires:	SoQt-devel >= 1.6.0
+BuildRequires:	cmake >= 3.5
 %{?with_python2:BuildRequires:	python-devel >= 1:2.7}
 %{?with_python3:BuildRequires:	python3-devel >= 1:3.2}
 BuildRequires:	qt5-build >= 5
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.714
+BuildRequires:	sed >= 4.0
 BuildRequires:	swig-python >= 3.0.8
 BuildRequires:	xorg-lib-libXmu-devel
 Requires:	Coin >= 4.0.0
@@ -101,6 +103,12 @@ Obsługa GUI (SoQt) do wiązań biblioteki Coin dla Pythona 2.
 %prep
 %setup -q -n pivy-%{version}
 %patch0 -p1
+
+%if "%{_lib}" != "lib"
+# chosing lib<ABI> depends on CMAKE_INTERNAL_PLATFORM_ABI and CMAKE_SIZEOF_VOID_P
+# properties, which are configured with at least C compiler
+%{__sed} -i -e '/^project/ s/NONE/C/' CMakeLists.txt
+%endif
 
 %build
 PATH=%{_libdir}/qt5/bin:$PATH

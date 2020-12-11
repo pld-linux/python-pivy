@@ -9,7 +9,7 @@ Summary:	Coin binding for Python 2
 Summary(pl.UTF-8):	Interfejs Pythona 2 do biblioteki Coin
 Name:		python-%{module}
 Version:	0.6.5
-Release:	1
+Release:	2
 License:	ISC
 Group:		Libraries/Python
 #Source0Download: https://github.com/coin3d/pivy/releases
@@ -70,7 +70,7 @@ Summary:	Coin binding for Python 3
 Summary(pl.UTF-8):	Interfejs Pythona 3 do biblioteki Coin
 Group:		Libraries/Python
 Requires:	Coin >= 4.0.0
-Requires:	python-modules >= 1:3.2
+Requires:	python3-modules >= 1:3.2
 
 %description -n python3-pivy
 Pivy is a Coin binding for Python. Coin is a high-level 3D graphics

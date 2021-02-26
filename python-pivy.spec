@@ -9,7 +9,7 @@ Summary:	Coin binding for Python 2
 Summary(pl.UTF-8):	Interfejs Pythona 2 do biblioteki Coin
 Name:		python-%{module}
 Version:	0.6.5
-Release:	2
+Release:	3
 License:	ISC
 Group:		Libraries/Python
 #Source0Download: https://github.com/coin3d/pivy/releases

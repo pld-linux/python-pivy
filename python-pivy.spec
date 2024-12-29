@@ -4,31 +4,32 @@
 %bcond_without	python3	# CPython 3.x module
 %bcond_without	qt	# SoQt GUI modules (only qt5 based SoQt is supported)
 
-%define 	module	pivy
+%define		module	pivy
 Summary:	Coin binding for Python 2
 Summary(pl.UTF-8):	Interfejs Pythona 2 do biblioteki Coin
 Name:		python-%{module}
-Version:	0.6.5
-Release:	3
+Version:	0.6.9
+Release:	1
 License:	ISC
 Group:		Libraries/Python
 #Source0Download: https://github.com/coin3d/pivy/releases
 Source0:	https://github.com/coin3d/pivy/archive/%{version}/pivy-%{version}.tar.gz
-# Source0-md5:	73b6083aa1c055c83294d0fa1fee037b
+# Source0-md5:	16a62b2f89226e06895501e3a62412ba
 Patch0:		%{name}-swig-pyver.patch
 URL:		https://github.com/coin3d/pivy
 BuildRequires:	Coin-devel >= 4.0.0
 BuildRequires:	OpenGL-GLU-devel
-BuildRequires:	Qt5Gui-devel >= 5
-BuildRequires:	Qt5OpenGL-devel >= 5
+BuildRequires:	Qt6Gui-devel >= 5
+BuildRequires:	Qt6OpenGL-devel >= 5
 BuildRequires:	SoQt-devel >= 1.6.0
 BuildRequires:	cmake >= 3.5
 %{?with_python2:BuildRequires:	python-devel >= 1:2.7}
 %{?with_python3:BuildRequires:	python3-devel >= 1:3.2}
-BuildRequires:	qt5-build >= 5
+BuildRequires:	qt6-build
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.714
 BuildRequires:	sed >= 4.0
+BuildRequires:	simage-devel
 BuildRequires:	swig-python >= 3.0.8
 BuildRequires:	xorg-lib-libXmu-devel
 Requires:	Coin >= 4.0.0
@@ -102,7 +103,7 @@ Obsługa GUI (SoQt) do wiązań biblioteki Coin dla Pythona 2.
 
 %prep
 %setup -q -n pivy-%{version}
-%patch0 -p1
+%patch -P 0 -p1
 
 %if "%{_lib}" != "lib"
 # chosing lib<ABI> depends on CMAKE_INTERNAL_PLATFORM_ABI and CMAKE_SIZEOF_VOID_P
@@ -111,7 +112,7 @@ Obsługa GUI (SoQt) do wiązań biblioteki Coin dla Pythona 2.
 %endif
 
 %build
-PATH=%{_libdir}/qt5/bin:$PATH
+PATH=%{_libdir}/qt6/bin:$PATH
 
 %if %{with python2}
 %py_build \
@@ -126,7 +127,7 @@ PATH=%{_libdir}/qt5/bin:$PATH
 %install
 rm -rf $RPM_BUILD_ROOT
 
-PATH=%{_libdir}/qt5/bin:$PATH
+PATH=%{_libdir}/qt6/bin:$PATH
 
 %if %{with python2}
 %py_install \

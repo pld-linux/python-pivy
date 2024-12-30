@@ -1,8 +1,7 @@
 #
 # Conditional build:
-%bcond_without	python2	# CPython 2.x module
+%bcond_with	python2	# CPython 2.x module
 %bcond_without	python3	# CPython 3.x module
-%bcond_without	qt	# SoQt GUI modules (only qt5 based SoQt is supported)
 
 %define		module	pivy
 Summary:	Coin binding for Python 2
@@ -21,7 +20,7 @@ BuildRequires:	Coin-devel >= 4.0.0
 BuildRequires:	OpenGL-GLU-devel
 BuildRequires:	Qt6Gui-devel >= 5
 BuildRequires:	Qt6OpenGL-devel >= 5
-BuildRequires:	SoQt-devel >= 1.6.0
+BuildRequires:	SoQt-devel >= 1.6.3
 BuildRequires:	cmake >= 3.5
 %{?with_python2:BuildRequires:	python-devel >= 1:2.7}
 %{?with_python3:BuildRequires:	python3-devel >= 1:3.2}
@@ -57,7 +56,7 @@ Summary:	GUI (SoQt) support for Python 2 Coin binding
 Summary(pl.UTF-8): Obsługa GUI (SoQt) do wiązań biblioteki Coin dla Pythona 2
 Group:		Libraries/Python
 Requires:	%{name} = %{version}-%{release}
-Requires:	SoQt >= 1.6.0
+Requires:	SoQt >= 1.6.3
 Requires:	python-PySide2
 
 %description gui
@@ -91,8 +90,8 @@ wizualizacji naukowej i inżynierskiej.
 Summary:	GUI (SoQt) support for Python 3 Coin binding
 Summary(pl.UTF-8): Obsługa GUI (SoQt) do wiązań biblioteki Coin dla Pythona 3
 Group:		Libraries/Python
-Requires:	SoQt >= 1.6.0
-Requires:	python3-PySide2
+Requires:	SoQt >= 1.6.3
+Requires:	python3-PySide6
 Requires:	python3-pivy = %{version}-%{release}
 
 %description -n python3-pivy-gui
@@ -105,45 +104,44 @@ Obsługa GUI (SoQt) do wiązań biblioteki Coin dla Pythona 2.
 %setup -q -n pivy-%{version}
 %patch -P 0 -p1
 
-%if "%{_lib}" != "lib"
-# chosing lib<ABI> depends on CMAKE_INTERNAL_PLATFORM_ABI and CMAKE_SIZEOF_VOID_P
-# properties, which are configured with at least C compiler
-%{__sed} -i -e '/^project/ s/NONE/C/' CMakeLists.txt
-%endif
-
 %build
-PATH=%{_libdir}/qt6/bin:$PATH
-
 %if %{with python2}
-%py_build \
-	%{!?with_qt:--without-soqt}
+mkdir -p build-2
+cd build-2
+%cmake ../ \
+	-DPython_EXECUTABLE=%{__python} \
+	-DPIVY_USE_QT6=ON
+%{__make}
 %endif
 
 %if %{with python3}
-%py3_build \
-	%{!?with_qt:--without-soqt}
+mkdir -p build-3
+cd build-3
+%cmake ../ \
+	-DPython_EXECUTABLE=%{__python3} \
+	-DPIVY_USE_QT6=ON
+%{__make}
 %endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-PATH=%{_libdir}/qt6/bin:$PATH
-
 %if %{with python2}
-%py_install \
-	%{!?with_qt:--without-soqt}
-
+%{__make} -C build-2 install \
+	DESTDIR=$RPM_BUILD_ROOT
 %py_postclean
 %endif
 
 %if %{with python3}
-%py3_install \
-	%{!?with_qt:--without-soqt}
+%{__make} -C build-3 install \
+	DESTDIR=$RPM_BUILD_ROOT
+%py3_ocomp $RPM_BUILD_ROOT%{py3_sitedir}
 %endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%if %{with python2}
 %files
 %defattr(644,root,root,755)
 %doc AUTHORS LICENSE NEWS README.md THANKS
@@ -159,21 +157,27 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{py_sitedir}/pivy/gui
 %attr(755,root,root) %{py_sitedir}/pivy/gui/_soqt.so
 %{py_sitedir}/pivy/gui/*.py[co]
+%{py3_sitedir}/pivy/qt
+%endif
 
+%if %{with python3}
 %files -n python3-pivy
 %defattr(644,root,root,755)
 %doc AUTHORS LICENSE NEWS README.md THANKS
 %dir %{py3_sitedir}/pivy
-%attr(755,root,root) %{py3_sitedir}/pivy/_coin.cpython-*.so
+%attr(755,root,root) %{py3_sitedir}/pivy/_coin.so
 %{py3_sitedir}/pivy/*.py
 %{py3_sitedir}/pivy/__pycache__
 %{py3_sitedir}/pivy/graphics
 %{py3_sitedir}/pivy/quarter
-%{py3_sitedir}/Pivy-%{version}-py*.egg-info
+%{?with_qt:%{py3_sitedir}/pivy/qt}
+#%{py3_sitedir}/Pivy-%{version}-py*.egg-info
 
 %files -n python3-pivy-gui
 %defattr(644,root,root,755)
 %dir %{py3_sitedir}/pivy/gui
-%attr(755,root,root) %{py3_sitedir}/pivy/gui/_soqt.cpython-*.so
+%attr(755,root,root) %{py3_sitedir}/pivy/gui/_soqt.so
 %{py3_sitedir}/pivy/gui/*.py
 %{py3_sitedir}/pivy/gui/__pycache__
+%{py3_sitedir}/pivy/qt
+%endif

@@ -7,14 +7,15 @@
 Summary:	Coin binding for Python 2
 Summary(pl.UTF-8):	Interfejs Pythona 2 do biblioteki Coin
 Name:		python-%{module}
-Version:	0.6.9
-Release:	4
+Version:	0.6.11
+Release:	1
 License:	ISC
 Group:		Libraries/Python
 #Source0Download: https://github.com/coin3d/pivy/releases
 Source0:	https://github.com/coin3d/pivy/archive/%{version}/pivy-%{version}.tar.gz
-# Source0-md5:	16a62b2f89226e06895501e3a62412ba
+# Source0-md5:	3dea0ef976e39f9a01c7fc1c77ea98f5
 Patch0:		%{name}-swig-pyver.patch
+Patch1:		python3.patch
 URL:		https://github.com/coin3d/pivy
 BuildRequires:	Coin-devel >= 4.0.0
 BuildRequires:	OpenGL-GLU-devel
@@ -102,7 +103,8 @@ Obsługa GUI (SoQt) do wiązań biblioteki Coin dla Pythona 2.
 
 %prep
 %setup -q -n pivy-%{version}
-%patch -P 0 -p1
+%patch -P0 -p1
+%patch -P1 -p1
 
 %build
 %if %{with python2}
@@ -168,7 +170,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py3_sitedir}/pivy/_coin.so
 %{py3_sitedir}/pivy/*.py
 %{py3_sitedir}/pivy/__pycache__
-%{py3_sitedir}/pivy/graphics
+%{py3_sitedir}/pivy/interactive
 %{py3_sitedir}/pivy/quarter
 %{?with_qt:%{py3_sitedir}/pivy/qt}
 #%{py3_sitedir}/Pivy-%{version}-py*.egg-info
